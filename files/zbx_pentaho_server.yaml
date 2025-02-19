@@ -1,0 +1,102 @@
+zabbix_export:
+  version: '6.0'
+  date: '2025-02-19T20:55:50Z'
+  groups:
+    - uuid: ce134ebbb10f41b39a9385596243f2c0
+      name: pentaho
+  templates:
+    - uuid: f5995700fa094f658e313b6e8cbeaa50
+      template: 'Pentaho  Task Scheduled - Custom HSC'
+      name: 'Pentaho  Task Scheduled - Custom HSC'
+      description: 'Template customizado para Pentaho Server'
+      groups:
+        - name: pentaho
+      discovery_rules:
+        - uuid: 8dabc3a85d5642f59ed692d63b0a92d0
+          name: 'Discover Jobs'
+          key: 'pentahomonitoring[discovertasks]'
+          lifetime: '0'
+          item_prototypes:
+            - uuid: 837975663b8547a28c5b4dfd5fab47dd
+              name: 'Task: {#JOBNAME}: Last Run Time'
+              key: 'pentahomonitoring[LastRunTime,{#JOBNAME}]'
+              units: unixtime
+              tags:
+                - tag: Application
+                  value: Pentaho
+                - tag: Application
+                  value: 'Task Scheduled'
+                - tag: Component
+                  value: 'Job Status'
+            - uuid: 04d1e778e2134bceac488cc3becf4388
+              name: 'Task: {#JOBNAME}: Next Run Time'
+              key: 'pentahomonitoring[NextRunTime,{#JOBNAME}]'
+              units: unixtime
+              tags:
+                - tag: Application
+                  value: Pentaho
+                - tag: Application
+                  value: 'Task Scheduled'
+                - tag: Component
+                  value: 'Job Status'
+            - uuid: 807bda2905184045ab15d7114a64354a
+              name: 'Task: {#JOBNAME}: Schedule Status'
+              key: 'pentahomonitoring[ScheduleStatus,{#JOBNAME}]'
+              valuemap:
+                name: 'Schedule Status'
+              tags:
+                - tag: Application
+                  value: Pentaho
+                - tag: Application
+                  value: 'Task Scheduled'
+                - tag: Component
+                  value: 'Job Status'
+            - uuid: 68d06eebfd9b4480a363c604fe5f3aa9
+              name: 'Task: {#JOBNAME}: Last Result'
+              key: 'pentahomonitoring[TaskLastResult,{#JOBNAME}]'
+              valuemap:
+                name: 'Jobs Status'
+              tags:
+                - tag: Application
+                  value: Pentaho
+                - tag: Application
+                  value: 'Task Scheduled'
+                - tag: Component
+                  value: 'Job Status'
+              trigger_prototypes:
+                - uuid: 4a83d4e4578c4a0a9016b0084af65772
+                  expression: 'last(/Pentaho  Task Scheduled - Custom HSC/pentahomonitoring[TaskLastResult,{#JOBNAME}])=2'
+                  name: 'Task: {#JOBNAME}: Last Result is failed'
+                  priority: AVERAGE
+                  manual_close: 'YES'
+                  tags:
+                    - tag: Application
+                      value: Pentaho
+                    - tag: Component
+                      value: 'Job Status'
+      tags:
+        - tag: Application
+          value: Pentaho
+        - tag: 'Template Type'
+          value: 'Task Scheduled'
+      valuemaps:
+        - uuid: 7699eb91972d4117bf3f68ff9b3cb5ae
+          name: 'Jobs Status'
+          mappings:
+            - value: '0'
+              newvalue: Finished
+            - value: '1'
+              newvalue: Running
+            - value: '2'
+              newvalue: Failed
+            - value: '3'
+              newvalue: 'No Sheduled'
+        - uuid: 0de070ca67d9442b93c5f2b512275ba7
+          name: 'Schedule Status'
+          mappings:
+            - value: '0'
+              newvalue: Normal
+            - value: '2'
+              newvalue: Paused
+            - value: '1'
+              newvalue: Unknow
